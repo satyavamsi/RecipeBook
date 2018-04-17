@@ -1,41 +1,30 @@
-import { Injectable} from '@angular/core';
-import {Recipe} from './recipe.model';
-import {Ingredient} from '../shared/ingredient.model';
-import {ShoppingListService} from '../shopping-list/shopping-list.service';
-import {Subject} from 'rxjs/Subject';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+
+import { Recipe } from './recipe.model';
+import { Ingredient } from '../shared/ingredient.model';
+import { ShoppingListService } from '../shopping-list/shopping-list.service';
 
 @Injectable()
 export class RecipeService {
-
   recipesChanged = new Subject<Recipe[]>();
 
-
-  private recipes: Recipe[] = [
-    new Recipe('A test Recipe',
-      'this is simple a test',
-      'http://cdnwp.audiencemedia.com/wp-content/uploads/2015/' +
-      '04/513716-1-eng-GB_lamb-shank-recipes-960x420.jpg',
-      [new Ingredient('Meat',1),
-        new Ingredient('French Fries',5)]),
-    new Recipe('A test Recipe',
-      'this is simple a test',
-      'http://cdnwp.audiencemedia.com/wp-content/uploads/2015/' +
-      '04/513716-1-eng-GB_lamb-shank-recipes-960x420.jpg',
-      [
-        new Ingredient('Meat',1),
-        new Ingredient('Blueberries',15)
-      ])
-  ];
+  private recipes: Recipe[] = [];
 
 
-  constructor(private slService: ShoppingListService) { }
+  constructor(private slService: ShoppingListService) {}
+
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes;
+    this.recipesChanged.next(this.recipes.slice());
+  }
 
   getRecipes() {
     return this.recipes.slice();
   }
 
   getRecipe(index: number) {
-    return this.recipes.slice()[index];
+    return this.recipes[index];
   }
 
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
@@ -53,8 +42,7 @@ export class RecipeService {
   }
 
   deleteRecipe(index: number) {
-    this.recipes.splice(index,1);
+    this.recipes.splice(index, 1);
     this.recipesChanged.next(this.recipes.slice());
   }
-
 }
